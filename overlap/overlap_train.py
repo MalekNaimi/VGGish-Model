@@ -140,7 +140,10 @@ with tf.Session() as sess:
     # print('Model Restored.')
 
     # The training loop.
-    accuracy = []
+    accuracy = []]
+    train_loss_per_epoch = []
+    val_loss_per_epoch = []
+    val_acc_per_epoch = []
     min_val_loss = 1000000
     best_val_acc = 0.0
     early_stopping = 0
@@ -148,22 +151,28 @@ with tf.Session() as sess:
         batch_loss = 0.0
         for i in tqdm(range(_NUM_BATCHES)):
             (batch_features, batch_labels) = _get_examples_batch(i,labeled_data)
-            _,_loss = sess.run([optimizer, loss],\
+            [num_steps, _loss, summaries, _] = sess.run([optimizer, loss],\
                 feed_dict={features_tensor: batch_features,labels: batch_labels})
-            # print('Epoch # %d, Step %d,  loss %g ' % (k+1,i+1,_loss))
+            train_batch_losses.append(_loss)
+            summary_writer.add_summary(summaries, num_steps)
+            print('Epoch # %d, Step %d,  loss %g ' % (k+1,i+1,_loss)
             batch_loss += _loss
         batch_loss /= float(_NUM_BATCHES)
+        train_loss_per_epoch.append(batch_loss)
         print('Epoch # %d, train_loss: %g'%(k+1,batch_loss))
         
         if (k % 10 == 0 and k > 0) or k == _NUM_EPOCHS:  
             (val_features,val_label) = _get_examples_batch(0,val_labeled_data,\
                                                 batch_size=len(val_labeled_data))
             val_loss = sess.run(loss,feed_dict={features_tensor:val_features,labels:val_label})
+            val_batch_losses.append(val_loss)
 
             preds = logits.eval(feed_dict={features_tensor:val_features})
             pred_label = np.argmax(preds,1)
             val_correct = np.asarray([1 for x,y in zip(pred_label,np.argmax(val_label,1)) if x == y])
             val_acc = np.sum(val_correct)/float(len(val_labeled_data))
+            val_loss_per_epoch.append(val_loss)
+            val_acc_per_epoch.append(val_acc)
 
             print('Epoch # %d, val_loss: %g, val_acc: %g' %(k+1,val_loss,val_acc))
             
