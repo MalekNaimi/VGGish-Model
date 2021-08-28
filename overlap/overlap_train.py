@@ -140,7 +140,7 @@ with tf.Session() as sess:
     # print('Model Restored.')
 
     # The training loop.
-    accuracy = []]
+    accuracy = []
     train_loss_per_epoch = []
     val_loss_per_epoch = []
     val_acc_per_epoch = []
@@ -151,11 +151,10 @@ with tf.Session() as sess:
         batch_loss = 0.0
         for i in tqdm(range(_NUM_BATCHES)):
             (batch_features, batch_labels) = _get_examples_batch(i,labeled_data)
-            [num_steps, _loss, summaries, _] = sess.run([optimizer, loss],\
+            _, _loss = sess.run([optimizer, loss],\
                 feed_dict={features_tensor: batch_features,labels: batch_labels})
-            train_batch_losses.append(_loss)
-            summary_writer.add_summary(summaries, num_steps)
-            print('Epoch # %d, Step %d,  loss %g ' % (k+1,i+1,_loss)
+           
+            # print('Epoch # %d, Step %d,  loss %g ' % (k+1,i+1,_loss)
             batch_loss += _loss
         batch_loss /= float(_NUM_BATCHES)
         train_loss_per_epoch.append(batch_loss)
@@ -226,6 +225,25 @@ with tf.Session() as sess:
                 'model_num_units_'+ str(FLAGS.num_units) + '_train_' + str(FLAGS.train_vggish)\
                     + ' test_acc:' + str(test_acc) + ' ' + 'val_acc:' + str(best_val_acc) + '\n')
     print('Finished Training. Results appended to log file.')
-
+    
+    
+ # plot the training loss vs epoch and save to disk:
+plt.figure(1)
+plt.plot(train_loss_per_epoch, "k^-")
+# plt.plot(train_loss_per_epoch, "k")
+plt.ylabel("loss")
+plt.xlabel("epoch=1000")
+plt.title("training loss per epoch")
+#plt.savefig("%s/train_loss_per_epoch.png" % audio_ckpt_dir)
+plt.show()
+# plot the val loss vs epoch and save to disk:
+plt.figure(2)
+plt.plot(val_loss_per_epoch, "k^-")
+# plt.plot(val_loss_per_epoch, "k")
+plt.ylabel("loss")
+plt.xlabel("epoch=1000")
+plt.title("validation loss per epoch")
+#plt.savefig("%s/val_loss_per_epoch.png" % audio_ckpt_dir)
+plt.show()
 
 
