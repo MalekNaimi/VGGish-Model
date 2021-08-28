@@ -14,10 +14,9 @@
 # ==============================================================================
 
 from __future__ import print_function
-
-from random import shuffle
 import random
 import datetime
+import matplotlib.pyplot as plt
 
 import numpy as np
 import tensorflow as tf
