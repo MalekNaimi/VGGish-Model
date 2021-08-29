@@ -163,7 +163,6 @@ with tf.Session() as sess:
             (val_features,val_label) = _get_examples_batch(0,val_labeled_data,\
                                                 batch_size=len(val_labeled_data))
             val_loss = sess.run(loss,feed_dict={features_tensor:val_features,labels:val_label})
-            val_batch_losses.append(val_loss)
 
             preds = logits.eval(feed_dict={features_tensor:val_features})
             pred_label = np.argmax(preds,1)
