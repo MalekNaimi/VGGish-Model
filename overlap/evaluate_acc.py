@@ -80,4 +80,3 @@ print('average_logits_clip_accuracy:',np.sum(np.asarray(logits_cnt) == np.asarra
 np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
 print(confusion_matrix(y_clip_label,standard_cnt))
 
-print(confusion_matrix(y_clip_label,standard_cnt))
